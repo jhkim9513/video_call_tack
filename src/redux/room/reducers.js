@@ -1,11 +1,11 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { connectRoom, inputRoomName, setMyStream } from "./action";
+import { clickMute, connectRoom, inputRoomName, setMyStream } from "./action";
 
 const initialState = {
   roomName: "",
   hasRoom: false,
   myStream: {},
-  mute: true,
+  mute: false,
 };
 
 export const roomReducer = createReducer(initialState, {
@@ -19,7 +19,8 @@ export const roomReducer = createReducer(initialState, {
   },
   [setMyStream]: (state, action) => {
     state.myStream = action.payload;
-    console.log(`action.payload : ${action.payload}`);
-    console.log(`state.myStream : ${state.myStream}`);
+  },
+  [clickMute]: (state, action) => {
+    state.mute = !state.mute;
   },
 });

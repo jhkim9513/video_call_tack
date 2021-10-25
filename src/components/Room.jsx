@@ -1,13 +1,21 @@
 import React, { useEffect, useRef } from "react";
 import { connect } from "react-redux";
-import { setMyStream } from "../redux/room/action";
+import { clickMute, setMyStream } from "../redux/room/action";
 
-function Room({ nickName, roomName, myStream, mute, dispatchSetMyStream }) {
+function Room({
+  nickName,
+  roomName,
+  myStream,
+  mute,
+  dispatchSetMyStream,
+  dispatchClickMute,
+}) {
   const videoRef = useRef();
+  const muteRef = useRef();
+  const selectRef = useRef();
 
   useEffect(async () => {
     const myMediaStream = await getMedia();
-    console.log(myMediaStream);
     dispatchSetMyStream(myMediaStream);
     videoRef.current.srcObject = myMediaStream;
   }, []);
@@ -27,22 +35,42 @@ function Room({ nickName, roomName, myStream, mute, dispatchSetMyStream }) {
       );
 
       videoRef.current.srcObject = myMediaStream;
-      return myMediaStream;
 
-      //   videoRef.current.srcObject = myStream;
-      //   if (!deviceId) {
-      //     await getCameras();
-      //   }
+      if (!deviceId) {
+        await getCameras(myMediaStream);
+      }
+      return myMediaStream;
     } catch (e) {
       console.log(e);
     }
   }
 
-  //   function handleMuteClick() {
-  //       myStream.getAudioTracks()
-  //       .forEach((track) => (track.enabled = !track.enabled));
-  //       if(!muted)
-  //   }
+  async function getCameras(myStream) {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const cameras = devices.filter((device) => device.kind === "videoinput");
+      const currentCamera = myStream.getVideoTracks()[0];
+      cameras.forEach((camera) => {
+        const option = document.createElement("option");
+        option.value = camera.deviceId;
+        option.innerText = camera.label;
+        if (currentCamera.label === camera.label) {
+          option.selected = true;
+        }
+        selectRef.current.appendChild(option);
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  function handleMuteClick() {
+    myStream
+      .getAudioTracks()
+      .forEach((track) => (track.enabled = !track.enabled));
+
+    dispatchClickMute();
+  }
 
   return (
     <div>
@@ -51,7 +79,17 @@ function Room({ nickName, roomName, myStream, mute, dispatchSetMyStream }) {
       </h1>
       <div>video</div>
       <video className="myFace" ref={videoRef} autoPlay></video>
-      <button className="muteBtn">Mute</button>
+      {!mute && (
+        <button className="muteBtn" ref={muteRef} onClick={handleMuteClick}>
+          <i class="fas fa-volume-up"></i>
+        </button>
+      )}
+      {mute && (
+        <button className="muteBtn" ref={muteRef} onClick={handleMuteClick}>
+          <i class="fas fa-volume-mute"></i>
+        </button>
+      )}
+      <select className="selectCamera" ref={selectRef}></select>
     </div>
   );
 }
@@ -69,7 +107,9 @@ const mapDispatchToProps = (dispatch, props) => {
   return {
     dispatchSetMyStream: (stream) => {
       dispatch(setMyStream(stream));
-      console.log(`stream : ${stream}`);
+    },
+    dispatchClickMute: () => {
+      dispatch(clickMute());
     },
   };
 };
