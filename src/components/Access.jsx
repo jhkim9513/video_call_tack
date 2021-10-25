@@ -1,11 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { connect } from "react-redux";
-import { connectRoom } from "../redux/room/action";
+import { connectRoom, inputRoomName } from "../redux/room/action";
 
-function Access({ nickName, dispatchConnectRoom }) {
-  const [roomName, setRoomName] = useState("");
+function Access({
+  nickName,
+  dispatchConnectRoom,
+  roomName,
+  dispatchInputRoomName,
+}) {
   const onChange = (e) => {
-    setRoomName(e.target.value);
+    dispatchInputRoomName(e.target.value);
   };
   const onSubmit = () => {
     dispatchConnectRoom(roomName);
@@ -35,12 +39,14 @@ function Access({ nickName, dispatchConnectRoom }) {
 const mapStateToProps = (state, props) => {
   return {
     nickName: state.nickNameReducer.nickName,
+    roomName: state.roomReducer.roomName,
   };
 };
 
 const mapDispatchToProps = (dispatch, props) => {
   return {
     dispatchConnectRoom: (roomName) => dispatch(connectRoom(roomName)),
+    dispatchInputRoomName: (text) => dispatch(inputRoomName(text)),
   };
 };
 

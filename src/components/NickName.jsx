@@ -1,12 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { connect } from "react-redux";
-import { setNickName } from "../redux/nickName/actions";
+import { setNickName, inputNickName } from "../redux/nickName/actions";
 
-function NickName({ dispatchNickName }) {
-  const [nickName, setNickName] = useState("");
+function NickName({ dispatchNickName, nickName, dispatchInputNickName }) {
   const inputRef = useRef();
   const onChange = (e) => {
-    setNickName(e.target.value);
+    dispatchInputNickName(e.target.value);
   };
   const onSubmit = () => {
     dispatchNickName(nickName);
@@ -32,12 +31,21 @@ function NickName({ dispatchNickName }) {
   );
 }
 
+const mapStateToProps = (state, props) => {
+  return {
+    nickName: state.nickNameReducer.nickName,
+  };
+};
+
 const mapDispatchToProps = (dispatch, props) => {
   return {
     dispatchNickName: (nickName) => {
       dispatch(setNickName(nickName));
     },
+    dispatchInputNickName: (text) => {
+      dispatch(inputNickName(text));
+    },
   };
 };
 
-export default connect(null, mapDispatchToProps)(NickName);
+export default connect(mapStateToProps, mapDispatchToProps)(NickName);
