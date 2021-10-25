@@ -3,6 +3,7 @@ import thunk from "redux-thunk";
 import { configureStore } from "@reduxjs/toolkit";
 import rootReducer from "./rootReducer";
 import { composeWithDevTools } from "redux-devtools-extension";
+import { applyMiddleware } from "redux";
 
 const middleWare = [logger, thunk];
 

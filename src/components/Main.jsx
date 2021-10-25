@@ -1,11 +1,24 @@
 import React from "react";
+import { connect } from "react-redux";
+import NickName from "./NickName";
+import Access from "./Access";
+import Room from "./Room";
 
-function Main(props) {
+function Main({ hasNickName, hasRoom }) {
   return (
     <>
-      <h1>hello</h1>
+      {!hasNickName && <NickName />}
+      {hasNickName && !hasRoom && <Access />}
+      {hasNickName && hasRoom && <Room />}
     </>
   );
 }
 
-export default Main;
+const mapStateToProps = (state, props) => {
+  return {
+    hasNickName: state.nickNameReducer.hasNickName,
+    hasRoom: state.roomReducer.hasRoom,
+  };
+};
+
+export default connect(mapStateToProps)(Main);
