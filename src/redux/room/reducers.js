@@ -1,11 +1,18 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { clickMute, connectRoom, inputRoomName, setMyStream } from "./action";
+import {
+  clickCamera,
+  clickMute,
+  connectRoom,
+  inputRoomName,
+  setMyStream,
+} from "./action";
 
 const initialState = {
   roomName: "",
   hasRoom: false,
   myStream: {},
   mute: false,
+  isCamera: false,
 };
 
 export const roomReducer = createReducer(initialState, {
@@ -22,5 +29,8 @@ export const roomReducer = createReducer(initialState, {
   },
   [clickMute]: (state, action) => {
     state.mute = !state.mute;
+  },
+  [clickCamera]: (state, action) => {
+    state.isCamera = !state.isCamera;
   },
 });
