@@ -1,6 +1,15 @@
 import React, { useEffect, useRef } from "react";
 import { connect } from "react-redux";
-import { clickCamera, clickMute, setMyStream } from "../redux/room/action";
+import {
+  clickCamera,
+  clickMute,
+  setAnswer,
+  setMyStream,
+  setOffer,
+  setPeerConnection,
+} from "../redux/room/action";
+// import socketIO from "socket.io-client";
+// import from "../client";
 
 function Room({
   nickName,
@@ -8,46 +17,22 @@ function Room({
   myStream,
   mute,
   isCamera,
+  peerConnection,
+  offer,
   dispatchSetMyStream,
   dispatchClickMute,
   dispatchClickCamera,
+  dispatchSetPeerConnection,
+  dispatchSetOffer,
 }) {
+  // const socket = socketIO("http://localhost:8080");
   const videoRef = useRef();
   const muteRef = useRef();
   const selectRef = useRef();
   const cameraRef = useRef();
+  const peersVideoRef = useRef();
 
-  useEffect(async () => {
-    const myMediaStream = await getMedia();
-    dispatchSetMyStream(myMediaStream);
-    videoRef.current.srcObject = myMediaStream;
-  }, []);
-
-  async function getMedia(deviceId) {
-    const initialConstrains = {
-      audio: true,
-      video: { facingMode: "user" },
-    };
-    const cameraConstraints = {
-      audio: true,
-      video: { deviceId: { exact: deviceId } },
-    };
-    try {
-      const myMediaStream = await navigator.mediaDevices.getUserMedia(
-        deviceId ? initialConstrains : cameraConstraints
-      );
-
-      videoRef.current.srcObject = myMediaStream;
-
-      if (!deviceId) {
-        await getCameras(myMediaStream);
-      }
-      return myMediaStream;
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
+  /* ---------------------- Methods ---------------------- */
   async function getCameras(myStream) {
     try {
       const devices = await navigator.mediaDevices.enumerateDevices();
@@ -83,6 +68,60 @@ function Room({
     dispatchClickCamera();
   }
 
+  /* ---------------------- Life Cycle ---------------------- */
+  useEffect(() => {
+    console.log("myStream:12312312321 ", myStream);
+  }, [myStream]);
+
+  useEffect(() => {
+    async function getMedia(deviceId) {
+      const initialConstrains = {
+        audio: true,
+        video: { facingMode: "user" },
+      };
+      const cameraConstraints = {
+        audio: true,
+        video: { deviceId: { exact: deviceId } },
+      };
+      try {
+        let myMediaStream = await navigator.mediaDevices.getUserMedia(
+          deviceId ? initialConstrains : cameraConstraints
+        );
+
+        dispatchSetMyStream(myMediaStream);
+
+        videoRef.current.srcObject = myMediaStream;
+
+        if (!deviceId) {
+          await getCameras(myMediaStream);
+        }
+        return myMediaStream;
+      } catch (e) {
+        console.log(e);
+      }
+    }
+
+    getMedia(); //
+    /* .then((stream) => {
+      makeConnection(stream);
+    }); */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // useEffect(() => {
+  //   const script = document.createElement("script");
+
+  //   script.src = "../public/js/client.js";
+  //   script.async = true;
+
+  //   document.body.appendChild(script);
+
+  //   return () => {
+  //     document.body.removeChild(script);
+  //   };
+  // }, []);
+
+  /* ---------------------- Render ---------------------- */
   return (
     <div>
       <h1>
@@ -93,12 +132,12 @@ function Room({
 
       {!mute && (
         <button className="muteBtn" ref={muteRef} onClick={handleMuteClick}>
-          <i class="fas fa-volume-up"></i>
+          <i className="fas fa-volume-up"></i>
         </button>
       )}
       {mute && (
         <button className="muteBtn" ref={muteRef} onClick={handleMuteClick}>
-          <i class="fas fa-volume-mute"></i>
+          <i className="fas fa-volume-mute"></i>
         </button>
       )}
 
@@ -108,7 +147,7 @@ function Room({
           ref={cameraRef}
           onClick={handleCameraClick}
         >
-          <i class="fas fa-video"></i>
+          <i className="fas fa-video"></i>
         </button>
       )}
       {isCamera && (
@@ -117,11 +156,13 @@ function Room({
           ref={cameraRef}
           onClick={handleCameraClick}
         >
-          <i class="fas fa-video-slash"></i>
+          <i className="fas fa-video-slash"></i>
         </button>
       )}
 
       <select className="selectCamera" ref={selectRef}></select>
+
+      <video className="peersFace" ref={peersVideoRef} autoPlay></video>
     </div>
   );
 }
@@ -133,6 +174,9 @@ const mapStateToProps = (state, props) => {
     myStream: state.roomReducer.myStream,
     mute: state.roomReducer.mute,
     isCamera: state.roomReducer.isCamera,
+    peerConnection: state.roomReducer.peerConnection,
+    offer: state.roomReducer.offer,
+    answer: state.roomReducer.answer,
   };
 };
 
@@ -146,6 +190,15 @@ const mapDispatchToProps = (dispatch, props) => {
     },
     dispatchClickCamera: () => {
       dispatch(clickCamera());
+    },
+    dispatchSetPeerConnection: (peerConnection) => {
+      dispatch(setPeerConnection(peerConnection));
+    },
+    dispatchSetOffer: (offer) => {
+      dispatch(setOffer(offer));
+    },
+    dispatchSetAnswer: (answer) => {
+      dispatch(setAnswer(answer));
     },
   };
 };

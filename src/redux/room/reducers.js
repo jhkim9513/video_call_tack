@@ -4,15 +4,21 @@ import {
   clickMute,
   connectRoom,
   inputRoomName,
+  setAnswer,
   setMyStream,
+  setOffer,
+  setPeerConnection,
 } from "./action";
 
 const initialState = {
   roomName: "",
   hasRoom: false,
-  myStream: {},
+  myStream: "",
   mute: false,
   isCamera: false,
+  peerConnection: "",
+  offer: "",
+  answer: "",
 };
 
 export const roomReducer = createReducer(initialState, {
@@ -32,5 +38,14 @@ export const roomReducer = createReducer(initialState, {
   },
   [clickCamera]: (state, action) => {
     state.isCamera = !state.isCamera;
+  },
+  [setPeerConnection]: (state, action) => {
+    state.peerConnection = action.payload;
+  },
+  [setOffer]: (state, action) => {
+    state.offer = action.payload;
+  },
+  [setAnswer]: (state, action) => {
+    state.answer = action.payload;
   },
 });
