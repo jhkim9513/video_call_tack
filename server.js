@@ -4,11 +4,11 @@ import express from "express";
 import path from "path";
 
 const app = express();
-app.use(express.static(path.join(__dirname, "index")));
-app.get("/", function (req, res) {
-  res.sendFile(path.join(__dirname, "/build/index.html"));
-});
-app.get("/*", (_, res) => res.redirect("/"));
+// app.use(express.static(path.join(__dirname, "index")));
+// app.get("/", function (req, res) {
+//   res.sendFile(path.join(__dirname, "/build/index.html"));
+// });
+// app.get("/*", (_, res) => res.redirect("/"));
 
 const httpServer = http.createServer(app);
 const wsServer = SocketIO(httpServer, {
