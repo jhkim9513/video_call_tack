@@ -4,7 +4,7 @@ import express from "express";
 import path from "path";
 
 const app = express();
-// app.use(express.static(path.join(__dirname, "index")));
+// app.use(express.static(path.join(__dirname, "/build")));
 // app.get("/", function (req, res) {
 //   res.sendFile(path.join(__dirname, "/build/index.html"));
 // });
@@ -22,10 +22,10 @@ const wsServer = SocketIO(httpServer, {
 // const wsServer = SocketIO(httpServer);
 
 wsServer.on("connection", (socket) => {
-  /* socket.onAny((event) => {
+  socket.onAny((event) => {
     console.log(wsServer.sockets.adapter);
     console.log(`Socket Event:${event}`);
-  }); */
+  });
 
   socket.on("join_room", (roomName) => {
     console.log(`I'm ${socket.id}`);

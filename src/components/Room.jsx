@@ -84,10 +84,14 @@ function Room({
     }
 
     printStream();
-    client(roomName, peerConnection, myStream);
+    client(roomName, peerConnection);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [peerConnection]);
+
+  useEffect(() => {
+    console.log(`myStream : ${myStream}`);
+  }, [myStream]);
 
   /* ---------------------- Render ---------------------- */
   return (
