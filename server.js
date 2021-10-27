@@ -13,7 +13,8 @@ const app = express();
 const httpServer = http.createServer(app);
 const wsServer = SocketIO(httpServer, {
   cors: {
-    origin: "http://localhost:3000",
+    // origin: "http://localhost:3000",
+    origin: "*",
     methods: ["GET", "POST"],
   },
 });

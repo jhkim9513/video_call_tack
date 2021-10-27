@@ -7,7 +7,7 @@ import {
 } from "../../redux/room/action";
 import store from "../../redux/store";
 
-function client(roomName, myPeerConnection) {
+function client(roomName, myPeerConnection, myStream) {
   const socket = io("http://localhost:8080");
 
   console.log(store.getState());
@@ -56,16 +56,33 @@ function client(roomName, myPeerConnection) {
     console.log("received the answer");
   });
 
-  socket.on("ice", (ice) => {
+  socket.on("ice", async (ice) => {
     /* TypeError: Failed to execute 'addIceCandidate' on 'RTCPeerConnection':
  Candidate missing values for both sdpMid and sdpMLineIndex */
     if (ice) {
       //위 에러를 해결하기 위함
-      myPeerConnection.addIceCandidate(ice);
+      await myPeerConnection.addIceCandidate(ice);
     }
     store.dispatch(setPeerConnection(myPeerConnection));
     console.log("received candidate");
   });
+
+  const handleIce = (data) => {
+    // candidate는 브라우저가 소통하는 방법을 알려주는것
+    // peerA와 peerB가 icecandidate 이벤트로 생성한 candidate들을 서로 주고 받음
+    socket.emit("ice", data.candidate, roomName);
+    console.log("sent candidate");
+  };
+
+  function handleAddStream(data) {
+    const peersVideoRef = document.querySelector(".peersFace");
+    peersVideoRef.srcObject = data.stream;
+    console.log(`myStream : ${myStream}`);
+    console.log(`data.stream : ${data.stream}`);
+  }
+
+  myPeerConnection.addEventListener("icecandidate", handleIce);
+  myPeerConnection.addEventListener("addstream", handleAddStream);
 }
 
 export default client;

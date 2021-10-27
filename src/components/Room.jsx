@@ -31,8 +31,6 @@ function Room({
   const selectRef = useRef();
   const cameraRef = useRef();
   const peersVideoRef = useRef();
-  console.log(`myStream : ${myStream}`);
-  console.log(`peerConnection : ${peerConnection}`);
 
   // /* ---------------------- Methods ---------------------- */
   async function getCameras(myStream) {
@@ -73,7 +71,7 @@ function Room({
   // /* ---------------------- Life Cycle ---------------------- */
 
   useEffect(() => {
-    async function getMedia(deviceId) {
+    async function printStream(deviceId) {
       try {
         videoRef.current.srcObject = myStream;
 
@@ -85,24 +83,23 @@ function Room({
       }
     }
 
-    getMedia().then((stream) => {
-      peerConnection.addEventListener("icecandidate", handleIce);
-      peerConnection.addEventListener("addstream", handleAddStream);
-      client(roomName, peerConnection);
-    });
+    printStream();
+    // peerConnection.addEventListener("icecandidate", handleIce);
+    // peerConnection.addEventListener("addstream", handleAddStream);
+    // dispatchSetPeerConnection(peerConnection);
+    client(roomName, peerConnection, myStream);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [peerConnection]);
 
-  const handleIce = (data) => {
-    // candidate는 브라우저가 소통하는 방법을 알려주는것
-    // peerA와 peerB가 icecandidate 이벤트로 생성한 candidate들을 서로 주고 받음
-    socket.emit("ice", data.candidate, roomName);
-    console.log("sent candidate");
-  };
+  // const handleIce = (data) => {
+  //   socket.emit("ice", data.candidate, roomName);
+  //   console.log("sent candidate");
+  // };
 
-  function handleAddStream(data) {
-    peersVideoRef.current.srcObject = data.stream;
-  }
+  // function handleAddStream(data) {
+  //   peersVideoRef.current.srcObject = data.stream;
+  // }
 
   /* ---------------------- Render ---------------------- */
   return (
@@ -111,7 +108,13 @@ function Room({
         {nickName}님 {roomName}방입니다.
       </h1>
       <div>video</div>
-      <video className="myFace" ref={videoRef} autoPlay></video>
+      <video
+        className="myFace"
+        ref={videoRef}
+        autoPlay
+        width="500px"
+        height="500px"
+      ></video>
 
       {!mute && (
         <button className="muteBtn" ref={muteRef} onClick={handleMuteClick}>
@@ -145,7 +148,13 @@ function Room({
 
       <select className="selectCamera" ref={selectRef}></select>
 
-      <video className="peersFace" ref={peersVideoRef} autoPlay></video>
+      <video
+        className="peersFace"
+        ref={peersVideoRef}
+        autoPlay
+        width="500px"
+        height="500px"
+      ></video>
     </div>
   );
 }
