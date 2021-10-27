@@ -6,6 +6,7 @@ import {
   setMyStream,
   setPeerConnection,
 } from "../redux/room/action";
+import { Button } from "../styledComponent/styledComponent";
 
 function Access({
   nickName,
@@ -102,7 +103,9 @@ function Access({
           value={roomName}
           onChange={onChange}
         />
-        <button>Go</button>
+        <Button color="red" doInput={roomName}>
+          Go
+        </Button>
       </form>
     </div>
   );

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import { setNickName, inputNickName } from "../redux/nickName/actions";
+import { Button } from "../styledComponent/styledComponent";
 
 function NickName({ dispatchNickName, nickName, dispatchInputNickName }) {
   const inputRef = useRef();
@@ -26,7 +27,9 @@ function NickName({ dispatchNickName, nickName, dispatchInputNickName }) {
           value={nickName}
           onChange={onChange}
         />
-        <button>Go</button>
+        <Button color="red" doInput={nickName}>
+          Go
+        </Button>
       </form>
     </div>
   );
