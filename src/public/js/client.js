@@ -7,8 +7,12 @@ import {
 } from "../../redux/room/action";
 import store from "../../redux/store";
 
-function client(roomName, myPeerConnection, myStream) {
-  const socket = io("http://localhost:8080");
+function client(roomNameParameter, myPeerConnectionParameter) {
+  const socket = io("http://localhost:8080", {
+    widthCredentials: true,
+  });
+  let roomName = roomNameParameter;
+  let myPeerConnection = myPeerConnectionParameter;
 
   console.log(store.getState());
   socket.emit("join_room", roomName);
@@ -77,12 +81,11 @@ function client(roomName, myPeerConnection, myStream) {
   function handleAddStream(data) {
     const peersVideoRef = document.querySelector(".peersFace");
     peersVideoRef.srcObject = data.stream;
-    console.log(`myStream : ${myStream}`);
-    console.log(`data.stream : ${data.stream}`);
   }
 
   myPeerConnection.addEventListener("icecandidate", handleIce);
   myPeerConnection.addEventListener("addstream", handleAddStream);
+  store.dispatch(setPeerConnection(myPeerConnection));
 }
 
 export default client;

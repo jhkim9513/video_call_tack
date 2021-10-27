@@ -16,8 +16,10 @@ const wsServer = SocketIO(httpServer, {
     // origin: "http://localhost:3000",
     origin: "*",
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
+// const wsServer = SocketIO(httpServer);
 
 wsServer.on("connection", (socket) => {
   /* socket.onAny((event) => {

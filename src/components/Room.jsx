@@ -8,7 +8,7 @@ import {
   setOffer,
   setPeerConnection,
 } from "../redux/room/action";
-import socketIO from "socket.io-client";
+// import socketIO from "socket.io-client";
 import client from "../public/js/client";
 
 function Room({
@@ -25,14 +25,14 @@ function Room({
   dispatchSetPeerConnection,
   dispatchSetOffer,
 }) {
-  const socket = socketIO("http://localhost:8080");
+  // const socket = socketIO("http://localhost:8080");
   const videoRef = useRef();
   const muteRef = useRef();
   const selectRef = useRef();
   const cameraRef = useRef();
   const peersVideoRef = useRef();
 
-  // /* ---------------------- Methods ---------------------- */
+  /* ---------------------- Methods ---------------------- */
   async function getCameras(myStream) {
     try {
       const devices = await navigator.mediaDevices.enumerateDevices();
@@ -84,22 +84,10 @@ function Room({
     }
 
     printStream();
-    // peerConnection.addEventListener("icecandidate", handleIce);
-    // peerConnection.addEventListener("addstream", handleAddStream);
-    // dispatchSetPeerConnection(peerConnection);
     client(roomName, peerConnection, myStream);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [peerConnection]);
-
-  // const handleIce = (data) => {
-  //   socket.emit("ice", data.candidate, roomName);
-  //   console.log("sent candidate");
-  // };
-
-  // function handleAddStream(data) {
-  //   peersVideoRef.current.srcObject = data.stream;
-  // }
 
   /* ---------------------- Render ---------------------- */
   return (
